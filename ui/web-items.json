@@ -1,0 +1,21 @@
+/*
+  Web Items allow you to insert navigation items (menu items, tabs etc) into 
+  various places within the product interface.
+ */
+[
+    {   "section" : "speakeasy.user-profile/top",
+        "label"   : "Start Pomodoro",
+        "url"     : "http://www.pomodorotechnique.com/",
+        "cssName" : "pomodoro-start-web-item",
+        "weight"  : 40},
+    {   "section" : "speakeasy.user-profile/top",
+        "label"   : "Configure Pomodoro",
+        "url"     : "http://www.pomodorotechnique.com/",
+        "cssName" : "pomodoro-config-web-item",
+        "weight"  : 50},
+    {   "section" : "operations-top-level",
+        "label"   : "Start Pomodoro",
+        "url"     : "http://www.pomodorotechnique.com/",
+        "cssName" : "pomodoro-start-web-item",
+        "weight"  : 20}
+]
