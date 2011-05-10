@@ -17,5 +17,10 @@
         "label"   : "Start Pomodoro",
         "url"     : "http://www.pomodorotechnique.com/",
         "cssName" : "pomodoro-start-web-item",
-        "weight"  : 20}
+        "weight"  : 20},
+    {   "section" : "system.browse",
+        "label"   : "Start Pomodoro",
+        "url"     : "http://www.pomodorotechnique.com/",
+        "cssName" : "pomodoro-start-web-item",
+        "weight"  : 0}
 ]
