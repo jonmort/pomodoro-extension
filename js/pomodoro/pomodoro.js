@@ -1,5 +1,5 @@
 /**
- * The main module
+ * The main pomodoro module adds pomodoro support to JIRA and Confluence.
  *
  * @context atl.general
  */
