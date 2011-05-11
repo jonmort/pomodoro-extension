@@ -11,13 +11,11 @@ Installation Instructions
 -------------------------
 
 1. Install [Speakeasy](http://confluence.atlassian.com/display/DEVNET/Speakeasy+Install+Guide)
-2. Clone this project
+2. Download [pomodoro.zip](https://github.com/downloads/jonmort/pomodoro-extension/pomodoro.zip) or 
+
+   Clone this project and create a zip 
 
          git clone git://github.com/jonmort/pomodoro-extension.git
-         
-3. Create zip of extension run 
-
-    Download [pomodoro.zip](https://github.com/downloads/jonmort/pomodoro-extension/pomodoro.zip) or
     
          cd pomodoro-extension
          zip -r pomodoro.zip * -x README.markdown
