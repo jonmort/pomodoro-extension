@@ -5,8 +5,10 @@
  */
 var $ = require('speakeasy/jquery').jQuery,
   tick, alarm, crank, running,
-  t,
-  pomodoroStage;
+  t, messageTimeout,
+  pomodoroStage,
+  notification,
+  start;
 
 
 $(document).ready(function() {
@@ -33,91 +35,125 @@ $(document).ready(function() {
   alarm = $('<audio id="alarm-sound" src="http://www.soundjay.com/clock/sounds/alarm-clock-1.mp3">');
   crank = $('<audio id="wind-sound" src="http://www.soundjay.com/clock/sounds/crank-2.mp3">');
 
-	crank.bind('ended', function(event) {
-	  if (playTicking()) {
-  		tick[0].play();
+  crank.bind('ended', function(event) {
+    if (playTicking()) {
+      tick[0].play();
     }
-	});
+  });
 
 });
 
 $('.pomodoro-start-web-item').live('click', function(event) {
-	event.preventDefault();
-	pomodoroStage();
+  event.preventDefault();
+  pomodoroStage();
 });
 
 $('.pomodoro-stop-web-item').live('click', function(event) {
-	event.preventDefault();
-	pomodoroEnd();
+  event.preventDefault();
+  pomodoroEnd();
 }); 
 
 $('#pomodoro-time').live('change', function(event) {
-	localStorage.setItem('pomodoro-length', $(event.target).val());
+  localStorage.setItem('pomodoro-length', $(event.target).val());
 });  
 
 $('#pomodoro-tick').live('change', function(event) {
-	localStorage.setItem('pomodoro-tick', event.target.checked);
+  localStorage.setItem('pomodoro-tick', event.target.checked);
 });  
 
 function play(sound) {
-	sound[0].play();
+  sound[0].play();
 }
 
 function pause(sound) {
-	sound[0].pause();
+  sound[0].pause();
 }
 
 function startPomodoro(){
-	var mins = length();
-	$(document).trigger('pomodoro-start');
-	play(crank);
-	$('.pomodoro-start-web-item').text('Stop Pomodoro');
-	t = setTimeout(endPomodoro, mins * 60 * 1000);
-	pomodoroStage = endPomodoro;
+  var mins = length();
+  $(document).trigger('pomodoro-start');
+  play(crank);
+  $('.pomodoro-start-web-item').text('Stop Pomodoro');
+  t = setTimeout(endPomodoro, mins * 60 * 1000);
+  pomodoroStage = endPomodoro;
 }
 
 function endPomodoro() {
   $(document).trigger('pomodoro-stop'); 
-	pause(tick);
-	alarm[0].currentTime=5;
-	play(alarm);
-	$('.pomodoro-start-web-item').text('Start Pomodoro');
-	clearTimeout(t);
-	pomodoroStage = startPomodoro;
+  pause(tick);
+  alarm[0].currentTime=5;
+  play(alarm);
+  $('.pomodoro-start-web-item').text('Start Pomodoro');
+  clearTimeout(t);
+  pomodoroStage = startPomodoro;
 }
 
 pomodoroStage = startPomodoro;
 
 function length() {
-	return $('#pomodoro-time').val() || localStorage['pomodoro-length'] || 25;
+  return $('#pomodoro-time').val() || localStorage['pomodoro-length'] || 25;
 }
 
 function playTicking() {
-	return localStorage['pomodoro-tick'] == "true";
+  return localStorage['pomodoro-tick'] == "true";
 }
 
 function showMessage(message, timeout) {
   if (window.webkitNotifications) {
     if (window.webkitNotifications.checkPermission() == 0) { // 0 is PERMISSION_ALLOWED
-			var notification = window.webkitNotifications.createNotification('', 'Pomodoro', message);
-			notification.show();
-			setTimeout(function() {
-			  notification.cancel();
-			}, timeout * 1000);
-		} else {
-			window.webkitNotifications.requestPermission(function() {
-			  showMessage(message);
-			});
-		}
+      notification = window.webkitNotifications.createNotification('', 'Pomodoro', message);
+      notification.replaceId = 'pomodoro-notification';
+      notification.show();
+      notification.onclick = function() {
+        notification.cancel();
+      };
+      if (timeout) {
+        var localNotification = notification;
+        notification.ondisplay = function() {
+          setTimeout(function() {
+            if (localNotification.cancel) {
+              localNotification.cancel();
+            }
+          }, timeout * 1000);
+        }
+      }
+    } else {
+      window.webkitNotifications.requestPermission(function() {
+        showMessage(message);
+      });
+    }
   } else {
     console.log(message);
   }
 }
 
+function updateMessage() {
+  var now = new Date().getTime();
+  var elapsedSeconds = Math.ceil((end - now)/1000);
+  if (end - now > 0) {
+    var mins = Math.floor(elapsedSeconds/(60));
+    var seconds = elapsedSeconds - mins*60;
+    showMessage('Time Remaining ' + mins + ':' + seconds, false);
+    messageTimeout = setTimeout(updateMessage, 1000);
+  }
+}
+
+function logWork() {
+  $('#log-work').click();
+}
+
+$(document).bind('dialogContentReady', function() {
+  $('#log-work-time-logged').val((length() + 5) + "m");
+});
+
 $(document).bind('pomodoro-start', function(event) {
   showMessage('Starting Pomodoro of length: ' + length() + ' minutes', 10);
+  end = new Date().getTime() + (length() * 60 * 1000);
+  setTimeout(updateMessage, 1000);
 });
 
 $(document).bind('pomodoro-stop', function(event) {
   showMessage('Pomodoro Ended', 30);
+  clearTimeout(messageTimeout);
+  logWork();
 });

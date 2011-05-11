@@ -2,8 +2,7 @@
   "key":       "pomodoro",
   "name":      "Pomodoro",
   "description":  "Pomodoro Timer",
-  "version":    "1",
-  
+  "version":    "1.0.1",  
   "vendor": {  "name": "Jon Mort",
            "url": "http://github.com/pomodoro-extension",
            "email": "jonmort@gmail.com" }
