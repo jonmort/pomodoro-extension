@@ -17,6 +17,8 @@ Installation Instructions
          
 3. Create zip of extension run 
 
+    Download [pomodoro.zip](https://github.com/downloads/jonmort/pomodoro-extension/pomodoro.zip) or
+    
          cd pomodoro-extension
          zip -r pomodoro.zip * -x README.markdown
          
