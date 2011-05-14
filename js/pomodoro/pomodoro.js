@@ -9,8 +9,20 @@ var $ = require('speakeasy/jquery').jQuery,
   pomodoroStage,
   notification,
   start;
+  
+var storage;
+	try {
+		// this is to fool the module system and load the extension even though the module doesn't exist.
+		var aoso = 'aoso/storage';
+		storage = require(aoso);
+		console.log(storage);
+	} catch(e) {
+	  console.log(e);
+		storage = localStorage;
+		console.log('localsStorage');
+	}
 
-
+console.log(require);
 $(document).ready(function() {
   var AJS = window.AJS;
 
@@ -54,11 +66,11 @@ $('.pomodoro-stop-web-item').live('click', function(event) {
 }); 
 
 $('#pomodoro-time').live('change', function(event) {
-  localStorage.setItem('pomodoro-length', $(event.target).val());
+  storage.setItem('pomodoro-length', $(event.target).val());
 });  
 
 $('#pomodoro-tick').live('change', function(event) {
-  localStorage.setItem('pomodoro-tick', event.target.checked);
+  storage.setItem('pomodoro-tick', event.target.checked);
 });  
 
 function play(sound) {
@@ -91,11 +103,11 @@ function endPomodoro() {
 pomodoroStage = startPomodoro;
 
 function length() {
-  return $('#pomodoro-time').val() || localStorage['pomodoro-length'] || 25;
+  return $('#pomodoro-time').val() || storage.getItem('pomodoro-length') || 25;
 }
 
 function playTicking() {
-  return localStorage['pomodoro-tick'] == "true";
+  return localStorage.getItem('pomodoro-tick') == "true";
 }
 
 function showMessage(message, timeout) {

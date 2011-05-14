@@ -1,0 +1,1 @@
+require('pomodoro/pomodoro').setStorage(require('aoso/storage'));
